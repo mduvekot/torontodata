@@ -1,0 +1,24 @@
+---
+title: "matching key terms"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{matching}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r eval=FALSE, include=FALSE}
+library(torontodata)
+```
+
+
+```{r eval=FALSE, include=FALSE}
+keywords <- key_terms()
+head(keywords)
+```
+
+```{r}
+library(torontodata)
+categorize_text("Keeping the climate within paramaters that permit human life is a hell of a lot easier than terraforming Mars, a planet that has no magnetosphere, no water and no air")
+```
+

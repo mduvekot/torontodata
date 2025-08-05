@@ -1,0 +1,55 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# torontodata <a href="https://duvekot.ca/torontodata"><img src="man/figures/logo.png" align="right" height="138"/></a>
+
+<!-- badges: start -->
+
+<!-- badges: end -->
+
+## Overview
+
+torontodata is a very simple package that makes it a little easier to
+access the Toronto City Council API that The Toronto City Website itself
+uses. It is by no means comprehensive, and only provides access to
+endpoints that I was able to locate. As far as I know, the is no public
+documention of the API, and this use of it has not been sanctioned or
+endorsed by the City of Toronto. It is not in any way affiliated with
+The City of Toronto’s Open Data Portal. See <https://open.toronto.ca/>
+for the officialopen data portal.
+
+## Installation
+
+``` r
+install.packages("torontodata")
+```
+
+### Development version
+
+To get a bug fix or to use a feature from the development version, you
+can install the development version of dplyr from GitHub.
+
+``` r
+# install.packages("pak")
+pak::pak("mduvekot/torontodata")
+```
+
+## Cheat Sheet
+
+<a href="https://github.com/mduvekot/cheatsheets/blob/main/torontodata.pdf"><img src="https://raw.githubusercontent.com/mduvekot/cheatsheets/main/pngs/thumbnails/torontodata-cheatsheet-thumbs.png" width="630" height="252"/></a>
+
+## Usage
+
+``` r
+library(torontodata)
+```
+
+## Getting help
+
+If you encounter a clear bug, please file an issue with a minimal
+reproducible example on
+[GitHub](https://github.com/mduvekot/torontodata/issues).
+
+## Code of conduct
+
+Be kind.

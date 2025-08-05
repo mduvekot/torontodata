@@ -1,0 +1,32 @@
+Package: torontodata
+Type: Package
+Title: Fetch data from the City of Toronto's API on City Council and  its committees
+Version: 0.1.0
+Authors@R: c(
+    person(
+      "Michiel", "Duvekot",
+      email = "michiel@duvekot.ca",
+      role = c("aut", "cre")
+    )
+  )
+Description: More about what it does (maybe more than one line).
+    Continuation lines should be indented.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    dplyr,
+    jsonlite,
+    rvest,
+    snakecase,
+    stringr,
+    tibble,
+    tidyr
+RoxygenNote: 7.3.2
+Suggests: 
+    knitr,
+    purrr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+VignetteBuilder: knitr
