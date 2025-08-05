@@ -7,7 +7,7 @@ editor_options:
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -35,10 +35,10 @@ The City of Toronto’s Open Data Portal. See <https://open.toronto.ca/>
 for the officialopen data portal.
 
 ## Installation
+This will work if ever I submit it to CRAN and it gets accepted. For nowm install the development version. See below.
 
-```{r, eval = FALSE}
+```{r installation, eval=FALSE}
 install.packages("torontodata")
-
 ```
 
 ### Development version
@@ -46,9 +46,14 @@ install.packages("torontodata")
 To get a bug fix or to use a feature from the development version, you
 can install the development version of dplyr from GitHub.
 
-```{r, eval = FALSE}
+```{r pak, eval=FALSE}
 # install.packages("pak")
 pak::pak("mduvekot/torontodata")
+```
+
+```{r remotes, eval=FALSE, include=TRUE}
+# install.packages("remotes")  # if not already installed
+remotes::install_github("mduvekot/torontodata")
 ```
 
 ## Cheat Sheet
@@ -57,7 +62,7 @@ pak::pak("mduvekot/torontodata")
 
 ## Usage
 
-```{r, message = FALSE}
+```{r load library, message=FALSE}
 library(torontodata)
 ```
 

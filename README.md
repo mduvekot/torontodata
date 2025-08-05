@@ -20,6 +20,9 @@ for the officialopen data portal.
 
 ## Installation
 
+This will work if ever I submit it to CRAN and it gets accepted. For
+nowm install the development version. See below.
+
 ``` r
 install.packages("torontodata")
 ```
@@ -32,6 +35,11 @@ can install the development version of dplyr from GitHub.
 ``` r
 # install.packages("pak")
 pak::pak("mduvekot/torontodata")
+```
+
+``` r
+# install.packages("remotes")  # if not already installed
+remotes::install_github("mduvekot/torontodata")
 ```
 
 ## Cheat Sheet
