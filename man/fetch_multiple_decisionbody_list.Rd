@@ -2,19 +2,24 @@
 % Please edit documentation in R/fetch_multiple_decisionbody_list.R
 \name{fetch_multiple_decisionbody_list}
 \alias{fetch_multiple_decisionbody_list}
-\title{fetch a list of decision bodies from the Toronto Council API}
+\title{Fetch a list of decision bodies from the Toronto Council API}
 \usage{
-fetch_multiple_decisionbody_list(term_id = 8)
+fetch_multiple_decisionbody_list(term_id = 8, use_cache = TRUE)
 }
 \arguments{
-\item{term_id}{the current term as an integer,}
+\item{term_id}{Integer. The council term (e.g., 8 for 2022–2026).}
+
+\item{use_cache}{Logical. If TRUE (default), returns cached results if available.}
 }
 \value{
-a data frame of decison bodies
+A data frame of decision bodies.
 }
 \description{
-This function retrieves a list of decision-making bodies for a given term, i.e. (8 is 2022-2026)
+This function retrieves a list of decision-making bodies for a given term.
+Results are cached by default to avoid repeated API calls.
 }
 \examples{
-fetch_multiple_decisionbody_list()
+fetch_multiple_decisionbody_list(use_cache = TRUE)
+fetch_multiple_decisionbody_list(use_cache = FALSE)
+
 }

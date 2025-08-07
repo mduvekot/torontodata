@@ -2,7 +2,7 @@
 title: "matching key terms"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{matching}
+  %\VignetteIndexEntry{matching key terms}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
