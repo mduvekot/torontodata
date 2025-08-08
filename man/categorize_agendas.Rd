@@ -23,16 +23,16 @@ DETAILS
 if(interactive()){
  results <- categorize_agendas(2467)
  results <- categorize_agendas(2566)
+ results <- categorize_agendas(2945)
+ results <- categorize_agendas(2946)
+
+decisionBodyId = 2945
+fetch_individual_meeting_agenda_item_titles(2945) 
+meetingId = 26585
+meetingId = 27110
  View(results$categorized)
  View(results$unmatched)
 
  }
 }
-}
-\seealso{
-\code{\link[purrr]{map}}, \code{\link[purrr]{list_c}}
- \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{filter}}
- \code{\link[stringr]{str_detect}}, \code{\link[stringr]{modifiers}}
- \code{\link[tibble]{tibble}}
- \code{\link[tidyr]{unnest}}
 }
