@@ -86,4 +86,14 @@ labs(
 
 
 
-df
+df |> 
+  filter(!is.na(matches)) |> 
+summarize(.by = c(matches,sector, decisionBodyCode),  n = n()) |> 
+  tidyr::complete(decisionBodyCode,matches) |> 
+arrange(desc(n)) |> 
+ggplot()+
+  aes(
+    x = decisionBodyCode,
+  y = matches, fill = n)+
+  geom_tile()+
+  scale_fill_viridis_c(na.value = "#000000")
