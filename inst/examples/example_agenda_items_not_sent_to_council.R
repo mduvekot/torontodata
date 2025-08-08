@@ -7,11 +7,12 @@ decisionBodyId <- fetch_multiple_decisionbody_list() |>
   ) |>
   dplyr::pull(decisionBodyId)
 
+decisionBodyId <- 2945
+
 objname <- paste0("agendas_", decisionBodyId)
 assign(objname, categorize_agendas(decisionBodyId))
 
-
-get(objname)$categorized
+# get(objname)$categorized
 
 agendas_council <- get(objname)$categorized |>
   dplyr::rowwise() |>

@@ -43,6 +43,8 @@ categorize_agendas <- function(decisionBodyId) {
   #   fetch_individual_meeting_agenda_item_titles
   # ) |>
   #   purrr::list_rbind()
+
+  # meetingIds <- c(26585)
 agenda_raw <- purrr::map(
   meetingIds,
   fetch_individual_meeting_agenda_item_titles
@@ -56,10 +58,14 @@ if (length(agenda_raw) == 0) {
   agenda_raw <- tibble::tibble(
     nativeTermYear = integer(),
     referenceNumber = character(),  # Add other expected columns here
-    agendaItemTitle = character()
+    agendaItemTitle = character(),
+    sector_info = tibble::tibble(
+            key_term = NA,
+            sector = NA
+          ) 
   )
 } else {
-  agenda_raw <<- purrr::list_rbind(agenda_raw)
+  agenda_raw <- purrr::list_rbind(agenda_raw)
 }
 
   # categorize by sector
@@ -117,8 +123,9 @@ if (length(agenda_raw) == 0) {
   #   dplyr::mutate(key_term = NA) |>
   #   dplyr::select(c("nativeTermYear","referenceNumber","agendaItemTitle","key_term","sector"))
 
-  list(
-    categorized = agenda_categorized
-    #unmatched = agenda_unmatched
-  )
+  # list(
+  #   categorized = agenda_categorized
+  #   #unmatched = agenda_unmatched
+  # )
+  agenda_categorized
 }
