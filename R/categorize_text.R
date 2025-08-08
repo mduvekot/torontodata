@@ -22,7 +22,9 @@ categorize_text <- function(text) {
       ignore_case = FALSE
     )
   )
-  if (!any(detected)) return(NULL)
+  if (!any(detected)) {
+    return(NULL)
+  }
   tibble::tibble(
     key_term = terms_tbl$key_terms[detected],
     sector = terms_tbl$sectors[detected]

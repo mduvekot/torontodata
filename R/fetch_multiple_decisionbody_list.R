@@ -10,7 +10,7 @@
 #' @examples
 #' fetch_multiple_decisionbody_list(use_cache = TRUE)
 #' fetch_multiple_decisionbody_list(use_cache = FALSE)
-#' 
+#'
 fetch_multiple_decisionbody_list <- local({
   cache <- list()
 
@@ -33,6 +33,3 @@ fetch_multiple_decisionbody_list <- local({
     result
   }
 })
-
-
-

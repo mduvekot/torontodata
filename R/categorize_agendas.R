@@ -10,9 +10,9 @@
 #'  results <- categorize_agendas(2566)
 #'  results <- categorize_agendas(2945)
 #'  results <- categorize_agendas(2946)
-#' 
+#'
 #' decisionBodyId = 2945
-#' fetch_individual_meeting_agenda_item_titles(2945) 
+#' fetch_individual_meeting_agenda_item_titles(2945)
 #' meetingId = 26585
 #' meetingId = 27110
 #'  View(results$categorized)
@@ -45,28 +45,28 @@ categorize_agendas <- function(decisionBodyId) {
   #   purrr::list_rbind()
 
   # meetingIds <- c(26585)
-agenda_raw <- purrr::map(
-  meetingIds,
-  fetch_individual_meeting_agenda_item_titles
-)
-
-# Filter out NULLs
-agenda_raw <- purrr::compact(agenda_raw)
-
-# If all results were NULL, return an empty tibble with expected columns
-if (length(agenda_raw) == 0) {
-  agenda_raw <- tibble::tibble(
-    nativeTermYear = integer(),
-    referenceNumber = character(),  # Add other expected columns here
-    agendaItemTitle = character(),
-    sector_info = tibble::tibble(
-            key_term = NA,
-            sector = NA
-          ) 
+  agenda_raw <- purrr::map(
+    meetingIds,
+    fetch_individual_meeting_agenda_item_titles
   )
-} else {
-  agenda_raw <- purrr::list_rbind(agenda_raw)
-}
+
+  # Filter out NULLs
+  agenda_raw <- purrr::compact(agenda_raw)
+
+  # If all results were NULL, return an empty tibble with expected columns
+  if (length(agenda_raw) == 0) {
+    agenda_raw <- tibble::tibble(
+      nativeTermYear = integer(),
+      referenceNumber = character(), # Add other expected columns here
+      agendaItemTitle = character(),
+      sector_info = tibble::tibble(
+        key_term = NA,
+        sector = NA
+      )
+    )
+  } else {
+    agenda_raw <- purrr::list_rbind(agenda_raw)
+  }
 
   # categorize by sector
   agenda_categorized <- agenda_raw |>
@@ -85,10 +85,12 @@ if (length(agenda_raw) == 0) {
             )
           )
           #if (!any(detected)) return(NULL)
-          if (!any(detected)) return(tibble::tibble(
-            key_term = NA,
-            sector = NA
-          ))
+          if (!any(detected)) {
+            return(tibble::tibble(
+              key_term = NA,
+              sector = NA
+            ))
+          }
           tibble::tibble(
             key_term = terms_tbl$key_terms[detected],
             sector = terms_tbl$sectors[detected]
@@ -98,7 +100,6 @@ if (length(agenda_raw) == 0) {
     ) |>
     tidyr::unnest(.data$sector_info)
 
-  
   # unmatched items
   # agenda_unmatched <- agenda_raw |>
   #   dplyr::mutate(
@@ -118,8 +119,8 @@ if (length(agenda_raw) == 0) {
   #       }
   #     )
   #   ) |>
-  #   dplyr::filter(purrr::map_lgl(.data$sector_info, is.null)) |> 
-  #   dplyr::rename(sector = sector_info) |> 
+  #   dplyr::filter(purrr::map_lgl(.data$sector_info, is.null)) |>
+  #   dplyr::rename(sector = sector_info) |>
   #   dplyr::mutate(key_term = NA) |>
   #   dplyr::select(c("nativeTermYear","referenceNumber","agendaItemTitle","key_term","sector"))
 
