@@ -13,7 +13,7 @@ lookup_decision_body_id(name = "City Council")
 an inter value for the decisionBodyId
 }
 \description{
-This function retrieves a an interger value for a decisonBody
+This function retrieves a an interger value for a decisionBody
 }
 \examples{
 lookup_decision_body_id()

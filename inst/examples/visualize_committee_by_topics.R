@@ -46,11 +46,11 @@ df <- df |>
     has_date = !is.na(council)
   )
 
-data_decisonbody_id_code_name
+data_decisionbody_id_code_name
 
 committee_labels <- setNames(
-  data_decisonbody_id_code_name()$decisionBodyName |> str_wrap(40),
-  data_decisonbody_id_code_name()$decisionBodyCode
+  data_decisionbody_id_code_name()$decisionBodyName |> str_wrap(40),
+  data_decisionbody_id_code_name()$decisionBodyCode
 )
 str(committee_labels)
 
@@ -130,3 +130,49 @@ df |>
   ) +
   geom_tile() +
   scale_fill_viridis_c(na.value = "#000000")
+
+
+# word frequency
+library(tidyr)
+library(stringr)
+library(tidytext)
+df |>
+  select(agendaItemTitle) |>
+  unnest_tokens(word, agendaItemTitle) %>% # Split into words
+  count(word, sort = TRUE) |>
+  select(word) |>
+  head(10000) |>
+  tail(1001) |>
+  constructive::construct(opts_list(constructor = c("list")))
+
+
+# match all_wprds
+library(dplyr)
+library(stringr)
+
+# Create regex pattern from all_words
+pattern <- paste0("\\b(", paste(all_words, collapse = "|"), ")\\b")
+
+library(dplyr)
+library(stringr)
+
+# open all the agendaItems that match a pattern but not a key_term in a browswer
+pattern_ <- paste0("\\b(", paste(all_words, collapse = "|"), ")\\b")
+df %>%
+  rowwise() |>
+  filter(str_detect(
+    agendaItemTitle,
+    regex(pattern = pattern_, ignore_case = TRUE)
+  )) |>
+  #select(matches, key_term, agendaItemTitle) |>
+  filter(is.na(matches)) |>
+  mutate(
+    url = paste0(
+      "https://secure.toronto.ca/council/agenda-item.do?item=",
+      nativeTermYear,
+      ".",
+      referenceNumber
+    )
+  ) |>
+  pull(url) |>
+  purrr::map(browseURL)

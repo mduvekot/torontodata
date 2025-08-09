@@ -1,5 +1,4 @@
-# words that match key_terms, but shouldn't
-df$matches |> unique() |> sort()
+# words that match key_terms, but popbably shouldn't
 list_of_words_that_shouldnt_match <- c(
   "Air",
   "AIR",
@@ -68,7 +67,6 @@ list_of_words_that_shouldnt_match <- c(
   "Localized",
   "Metrolinx",
   "Mitigating",
-  ,
   "Mitigation",
   "Net",
   "Ontario",

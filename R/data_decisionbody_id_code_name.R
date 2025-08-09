@@ -1,6 +1,24 @@
-get_data_decisionbodyid_from_decisionbody_code <- function(
-  decisionBodyCodeInput
-) {
+#' @title data decision body title
+#' @description returns a tibble with the decisionBodyId, decisionBodyCode and decisionBodyName for the Toronto Council commitees
+
+#' @return tibble
+#' @details decisionBodyCode is not something that exists in the API, but
+#' something I made up that is the first two (or three!, careful) LETTERS
+#' of the referenceNumber of an agenda item
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#'  #EXAMPLE1
+#'  }
+#' }
+#' @seealso
+#'  \code{\link[tibble]{tribble}}
+#' @rdname data_decisionbody_id_code_name
+#' @export
+#' @importFrom tibble tribble
+data_decisionbody_id_code_name <- function() {
+  # per https://secure.toronto.ca/council/#/committees
+  # last update 2025-08-08 15:49:59 EDT
   tibble::tribble(
     ~decisionBodyId,
     ~decisionBodyCode,
@@ -9,6 +27,22 @@ get_data_decisionbodyid_from_decisionbody_code <- function(
     2462L,
     "CC",
     "City Council",
+    2462L,
+    "DM",
+    "Other Deferred Matters",
+    2462L,
+    "RM",
+    "Routine Matters",
+    2462L,
+    "IA",
+    "Administrative Inquiry",
+    2462L,
+    "MM",
+    "Member Motions",
+    2462L,
+    "BL",
+    "Bills and By-Laws",
+
     # Committees Reporting to City Council
     2582L,
     "AU",
@@ -179,7 +213,7 @@ get_data_decisionbodyid_from_decisionbody_code <- function(
     "Sign Variance Committee",
     2683L,
     "TM",
-    "Subcommittee on Metrolinx’s Ontario Line Construction",
+    "Subcommittee on Metrolinx's Ontario Line Construction",
     2482L,
     "CT",
     "TO Live",
@@ -222,7 +256,7 @@ get_data_decisionbodyid_from_decisionbody_code <- function(
     2964L,
     "TTA",
     "Toronto Transit Commission - Audit & Risk Management Committee",
-    2945L,
+    2945,
     "TTH",
     "Toronto Transit Commission - Human Resources Committee",
     2984L,
@@ -237,187 +271,5 @@ get_data_decisionbodyid_from_decisionbody_code <- function(
     2747L,
     "QS",
     "Two-Spirit, Lesbian, Gay, Bisexual, Transgender and Queer Advisory Committee"
-  ) |>
-    dplyr::filter(decisionBodyCode == decisionBodyCodeInput) |>
-    dplyr::pull(decisionBodyId)
+  )
 }
-
-get_data_decisionbodyid_from_decisionbody_code()
-
-decisionBodyCode2decisionBodyId <- function(decisionBodyCodeInput) {
-  fetch_multiple_decisionbody_list() |>
-    dplyr::filter(
-      decisionBodyId ==
-        get_data_decisionbodyid_from_decisionbody_code(decisionBodyCodeInput)
-    ) |>
-    dplyr::pull(decisionBodyName)
-}
-
-decisonBodyCode2decisionBodyId <- Vectorize(decisonBodyCode2decisionBodyId)
-
-
-class(decisonBodyCode2decisionBodyId("IE"))
-
-
-codes <- tibble::tribble(
-  ~decisionBodyId,
-  ~decisionBodyCode,
-  2462L,
-  "CC",
-  2582L,
-  "AU",
-  2564L,
-  "HL",
-  2562L,
-  "BU",
-  2583L,
-  "CA",
-  2585L,
-  "NC",
-  2563L,
-  "EC",
-  2468L,
-  "EX",
-  2542L,
-  "GG",
-  2566L,
-  "IE",
-  2565L,
-  "PH",
-  2463L,
-  "ST",
-  2464L,
-  "EY",
-  2465L,
-  "NY",
-  2467L,
-  "SC",
-  2466L,
-  "TE",
-  2749L,
-  "AA",
-  2469L,
-  "BA",
-  2724L,
-  "HU",
-  2725L,
-  "HP",
-  2864L,
-  "HX",
-  2644L,
-  "BV",
-  2647L,
-  "BZ",
-  2645L,
-  "BW",
-  2646L,
-  "BX",
-  2765L,
-  "TS",
-  2704L,
-  "EA",
-  2744L,
-  "CR",
-  2483L,
-  "RA",
-  2512L,
-  NA_character_,
-  2642L,
-  "DG",
-  2602L,
-  "DB",
-  2510L,
-  "EP",
-  2904L,
-  "FW",
-  2745L,
-  "FB",
-  2750L,
-  "HS",
-  2924L,
-  "LR",
-  2844L,
-  "LC",
-  2588L,
-  "AF",
-  2627L,
-  "NM",
-  2622L,
-  "NA",
-  2623L,
-  NA_character_,
-  2628L,
-  "ND",
-  2804L,
-  "NH",
-  2624L,
-  "NP",
-  2629L,
-  NA_character_,
-  2630L,
-  "NS",
-  2625L,
-  "NL",
-  2626L,
-  "XV",
-  2505L,
-  "SV",
-  2509L,
-  "SY",
-  2484L,
-  "SX",
-  2502L,
-  "SZ",
-  2703L,
-  "PS",
-  2784L,
-  "SE",
-  2643L,
-  "SB",
-  2683L,
-  "TM",
-  2482L,
-  "CT",
-  2503L,
-  "RG",
-  2522L,
-  "RZ",
-  2488L,
-  "RY",
-  2586L,
-  "DI",
-  2587L,
-  "TA",
-  2748L,
-  "FA",
-  2491L,
-  "IB",
-  2746L,
-  "MA",
-  2490L,
-  "PA",
-  2663L,
-  "PR",
-  2511L,
-  "PB",
-  2944L,
-  "TT",
-  2964L,
-  "TT",
-  2945L,
-  "TT",
-  2984L,
-  "TT",
-  2489L,
-  "ZB",
-  2631L,
-  "NZ",
-  2747L,
-  "QS",
-)
-
-committee_labels <- dplyr::left_join(
-  codes,
-  fetch_multiple_decisionbody_list()
-) |>
-  dplyr::select(decisionBodyCode, decisionBodyName)

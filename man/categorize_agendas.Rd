@@ -27,7 +27,7 @@ if(interactive()){
  results <- categorize_agendas(2946)
 
 decisionBodyId = 2945
-fetch_individual_meeting_agenda_item_titles(2945) 
+fetch_individual_meeting_agenda_item_titles(2945)
 meetingId = 26585
 meetingId = 27110
  View(results$categorized)
