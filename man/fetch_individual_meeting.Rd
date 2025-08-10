@@ -2,7 +2,7 @@
 % Please edit documentation in R/fetch_individual_meeting.R
 \name{fetch_individual_meeting}
 \alias{fetch_individual_meeting}
-\title{fetch_individual_meeting}
+\title{fetch individual meeting}
 \usage{
 fetch_individual_meeting(meetingId = 25849)
 }
@@ -17,13 +17,6 @@ fetches the Record from URLS like "https://secure.toronto.ca/council/api/individ
 }
 \details{
 DETAILS
-}
-\examples{
-meeting_data <- fetch_individual_meeting(meetingId = 25849)
-agendaItemTitles <- meeting_data$sections$agendaItems |>
-  purrr::map(~ dplyr::pull(.x, agendaItemTitle)) |>
-  purrr::flatten_chr()
-agendaItemTitles
 }
 \seealso{
 \code{\link[jsonlite]{toJSON, fromJSON}}

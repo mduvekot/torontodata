@@ -17,6 +17,7 @@ LazyData: true
 Imports: 
     dplyr,
     jsonlite,
+    lubridate,
     rvest,
     snakecase,
     stringr,
