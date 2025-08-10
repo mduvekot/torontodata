@@ -2,22 +2,22 @@
 % Please edit documentation in R/match_key_terms.R
 \name{match_key_terms}
 \alias{match_key_terms}
-\title{FUNCTION_TITLE}
+\title{matchkey terms}
 \usage{
-match_key_terms(df, name_col = "agendaItemTitle", lut = key_terms)
+match_key_terms(df, name_col = "agendaItemTitle", lut = key_terms())
 }
 \arguments{
-\item{df}{dataframe}
+\item{df}{data frame}
 
-\item{name_col}{character, the anme of the column that tas the text t0 be matched}
+\item{name_col}{character, Default: 'agendaItemTitle'}
 
-\item{lut}{a dataframe, like key_terms()}
+\item{lut}{data frame, Default: key_terms()}
 }
 \value{
-OUTPUT_DESCRIPTIONdtaframe
+data frame
 }
 \description{
-FUNCTION_DESCRIPTION
+use a lookup table to match key tersma snf sectors to agendaItemTitle
 }
 \details{
 DETAILS
@@ -25,8 +25,7 @@ DETAILS
 \examples{
 \dontrun{
 if(interactive()){
- df <- fetch_all_agenda_items(decisionBodyId = 2984)
-match_key_terms(df, "agendaItemTitle", key_terms())
+ #EXAMPLE1
  }
 }
 }

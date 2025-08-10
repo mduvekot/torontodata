@@ -1,53 +1,61 @@
-#' @title FUNCTION_TITLE
-#' @description FUNCTION_DESCRIPTION
-#' @param df dataframe
-#' @param name_col character, the anme of the column that tas the text t0 be matched
-#' @param lut a dataframe, like key_terms()
-#' @return OUTPUT_DESCRIPTIONdtaframe
+#' @title matchkey terms
+#' @description use a lookup table to match key tersma snf sectors to agendaItemTitle
+#' @param df data frame
+#' @param name_col character, Default: 'agendaItemTitle'
+#' @param lut data frame, Default: key_terms()
+#' @return data frame
 #' @details DETAILS
 #' @examples
 #' \dontrun{
 #' if(interactive()){
-#'  df <- fetch_all_agenda_items(decisionBodyId = 2984)
-#' match_key_terms(df, "agendaItemTitle", key_terms())
+#'  #EXAMPLE1
 #'  }
 #' }
 #' @rdname match_key_terms
 #' @export
-#'
-match_key_terms <- function(df, name_col = "agendaItemTitle", lut = key_terms) {
-  # Ensure the column exists
+match_key_terms <- function(
+  df,
+  name_col = "agendaItemTitle",
+  lut = key_terms()
+) {
   if (!name_col %in% names(df)) {
     stop("The specified name column does not exist in the dataframe.")
   }
 
-  # Create an empty list to store matches
-  results <- lapply(seq_len(nrow(df)), function(i) {
-    text <- df[[name_col]][i]
-    matches <- lapply(seq_len(nrow(lut)), function(j) {
-      key <- lut$key_terms[j]
-      sector <- lut$sector[j]
-      if (grepl(key, text, ignore.case = TRUE)) {
-        list(
-          key_term = key,
-          sector = sector,
-          match = regmatches(text, regexpr(key, text, ignore.case = TRUE))
-        )
-      } else {
-        NULL
-      }
-    })
-    matches <- Filter(Negate(is.null), matches)
-    if (length(matches) == 0) {
-      list(key_term = NA, sector = NA, match = NA)
-    } else {
-      # Return all matches as separate rows
-      lapply(matches, function(m) {
-        c(df[i, , drop = FALSE], m)
-      })
-    }
-  })
+  # Initialize list to collect all match rows
+  all_matches <- list()
 
-  # Flatten the list and bind into a dataframe
-  do.call(rbind, unlist(results, recursive = FALSE))
+  for (i in seq_len(nrow(df))) {
+    text <- df[[name_col]][i]
+    row_data <- df[i, , drop = FALSE]
+
+    for (j in seq_len(nrow(lut))) {
+      key <- lut$key_terms[j]
+      sectors <- lut$sectors[j]
+
+      if (grepl(key, text, ignore.case = TRUE)) {
+        match_str <- regmatches(text, regexpr(key, text, ignore.case = TRUE))
+        match_row <- cbind(
+          row_data,
+          key_term = key,
+          sectors = sectors,
+          match = match_str
+        )
+        all_matches[[length(all_matches) + 1]] <- match_row
+      }
+    }
+
+    # If no matches, add a row with NAs
+    if (!any(sapply(all_matches, function(x) identical(x[[name_col]], text)))) {
+      all_matches[[length(all_matches) + 1]] <- cbind(
+        row_data,
+        key_term = NA,
+        sectors = NA,
+        match = NA
+      )
+    }
+  }
+
+  # Combine all match rows into a single dataframe
+  do.call(rbind, all_matches)
 }
