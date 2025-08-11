@@ -22,7 +22,7 @@ library(torontodata)
 The **decisionBodyId** is a numerical value that identifies a commmittee. You'll need to to query the Toronto City API on committee meetings.
 
 ```{r eval=FALSE, include=FALSE}
-fetch_multiple_decisionbody_list() 
+fetch_multiple_decisionbody_list()
 ```
 
 If you know the exact name of the committee, you can look up the **decisionBodyId** by name
@@ -32,28 +32,43 @@ lookup_decision_body_id(name = "Scarborough Community Council")
 ```
 
 When you have a **decisionBodyID**, you can lookup the meetings for that committee
+
 ```{r eval=FALSE, include=FALSE}
 fetch_multiple_meeting(decisionBodyId = 2467)
-```
+``
+`
 and once you have a list of all the **meetingId** values, you can query those
-```{r eval=FALSE, include=FALSE}
 meeting_25793 <- fetch_individual_meeting(meetingId = 25793)
 ```
 
 you may be interested in the agenda items of that meeting
+
 ```{r eval=FALSE, include=FALSE}
  meeting_25793[["sections"]][["agendaItems"]][[1]]
-```
+`
+``
 We have a function that makes accessing the titles of the agenda items a bit easier:
-```{r eval=FALSE, include=FALSE}
-fetch_individual_meeting_agenda_item_titles(meetingId = 25793) 
+fetch_individual_meeting_agenda_item_titles(meetingId = 25793)
 ```
 
 What if you wanted to have a a list of all the agendaItemTitles for all the meetings of a committee?
+
 ```{r eval=FALSE, include=FALSE}
-meetingIds <- fetch_multiple_meeting(decisionBodyId = 2467)$meetingId 
-meetings_2467 <- purrr::map(meetingIds, fetch_individual_meeting_agenda_item_titles) |> 
+meetingIds <- fetch_multiple_meeting(decisionBodyId = 2467)$meetingId
+meetings_2467 <- purrr::map(
+  meetingIds,
+  fetch_individual_meeting_agenda_item_titles
+) |>
   purrr::list_rbind()
 meetings_2467
 ```
 
+```{r}
+library(httr)
+
+res <- GET(
+  "https://secure.toronto.ca/council/api/multiple/decisionbody-list.json?termId=8"
+)
+headers(res)
+
+```

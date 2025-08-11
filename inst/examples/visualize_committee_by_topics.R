@@ -3,8 +3,10 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 library(torontodata)
+library(readr)
 
-folder_path <- "~/Desktop/council/"
+folder_path <- "~/Desktop/to_council_commitees_2025-08-11"
+
 csv_files <- list.files(
   path = folder_path,
   pattern = "\\.csv$",
@@ -13,37 +15,41 @@ csv_files <- list.files(
 
 df <- csv_files %>%
   lapply(
-    read.csv,
-    stringsAsFactors = FALSE,
-    colClasses = c(
-      "character",
-      "integer",
-      "character",
-      "character",
-      "character",
-      "character",
-      "integer",
-      "character"
-    )
-  ) %>%
+   readr::read_csv, 
+    col_types = readr::cols(...1 = col_integer(), 
+        nativeTermYear = col_integer(), 
+        considerStartTime = col_datetime(format = "%Y-%m-%d %H:%M:%S"), 
+        considerTypeCd = col_character(), 
+        itemStatusCd = col_integer(), 
+        meetingId = col_integer(), 
+        publishTypeCd = col_character(), 
+        wards = col_character(), 
+        inCamera = col_character(), 
+        agendaItemId = col_integer(), 
+        currentInd = col_character(), 
+        nativeItemStatusCd = col_character(), 
+        referenceNumber = col_character(), 
+        keyItemInd = col_character(), 
+        heldByFirstName = col_character(), 
+        heldByLastName = col_character(), 
+        statutory = col_character(), 
+        urgent = col_character(), 
+        heldByMemberId = col_character(), 
+        confidentialReason = col_character(), 
+        annotation = col_character(), 
+        url = col_character(), 
+        sectors = col_character(), 
+        key_terms = col_character(), 
+        key_term = col_character(), 
+        match = col_character()
+  )
+) %>%
   bind_rows()
 
 df <- df |>
   mutate(
-    pattern = str_replace_all(key_term, "(\\w+).*", "\\\\b\\1\\\\w*\\\\b"),
-    matches = str_extract_all(
-      agendaItemTitle,
-      regex(pattern, ignore_case = TRUE)
-    )
-  ) |>
-  tidyr::unnest_longer(matches)
-
-
-df <- df |>
-  mutate(
     # decisionBodyCode = str_sub(referenceNumber, 1,2),
-    decisionBodyCode = str_extract(referenceNumber, "[A-Z]+(?=\\d)"),
-    has_date = !is.na(council)
+    decisionBodyCode = str_extract(referenceNumber, "[A-Z]+(?=\\d)")
   )
 
 data_decisionbody_id_code_name
@@ -55,9 +61,10 @@ committee_labels <- setNames(
 str(committee_labels)
 
 
-df$sector |> unique()
+df$sectors |> unique()
+
 df |>
-  filter(!is.na(sector)) |>
+  filter(!is.na(sectors)) |>
   summarize(.by = everything(), n = n()) |>
   ggplot() +
   labs(
@@ -67,9 +74,9 @@ df |>
   ) +
   aes(
     x = n,
-    y = sector,
-    fill = sector,
-    alpha = has_date
+    y = sectors,
+    fill = sectors,
+    # alpha = has_date
   ) +
   geom_col(orientation = "y") +
   scale_fill_manual(
@@ -118,14 +125,15 @@ df |>
 
 
 df |>
-  filter(!is.na(matches)) |>
-  summarize(.by = c(matches, sector, decisionBodyCode), n = n()) |>
-  tidyr::complete(decisionBodyCode, matches) |>
+  filter(!is.na(match)) |>
+  summarize(.by = c(key_terms, sectors, decisionBodyCode), n = n()) |>
   arrange(desc(n)) |>
+  filter(n > 5) |> 
+  tidyr::complete(decisionBodyCode, key_terms) |>
   ggplot() +
   aes(
     x = decisionBodyCode,
-    y = matches,
+    y = key_terms,
     fill = n
   ) +
   geom_tile() +

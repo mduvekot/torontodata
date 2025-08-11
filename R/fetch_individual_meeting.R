@@ -10,6 +10,7 @@
 #' @export
 #' @importFrom jsonlite fromJSON
 fetch_individual_meeting <- function(meetingId = 25849) {
+  Sys.sleep(.3)
   base_url <- "https://secure.toronto.ca/council/api/individual/meeting/"
   endpoint <- paste0(base_url, meetingId, ".json")
   json_data <- jsonlite::fromJSON(endpoint)

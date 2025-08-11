@@ -30,11 +30,13 @@ match_key_terms <- function(
     row_data <- df[i, , drop = FALSE]
 
     for (j in seq_len(nrow(lut))) {
-      key <- lut$key_terms[j]
+      key <- paste0("\\b", lut$key_terms[j], "\\b")
       sectors <- lut$sectors[j]
 
-      if (grepl(key, text, ignore.case = TRUE)) {
-        match_str <- regmatches(text, regexpr(key, text, ignore.case = TRUE))
+      print(key)
+
+      if (grepl(key, text, ignore.case = FALSE)) {
+        match_str <- regmatches(text, regexpr(key, text, ignore.case = FALSE))
         match_row <- cbind(
           row_data,
           key_term = key,
@@ -58,4 +60,59 @@ match_key_terms <- function(
 
   # Combine all match rows into a single dataframe
   do.call(rbind, all_matches)
+}
+
+#' @title match_key_terms - tidy
+#' @description updatye a dtaframe with matched key_terms
+#' @param df daatrframe
+#' @param name_col name of a column that contains words to be macthed, Default: 'agendaItemTitle'
+#' @param lut a look up tableas a tibble of dataframe PARAM_DESCRIPTION, Default: key_terms()
+#' @return data frame
+#' @details DETAILS
+#' @examples
+#' \dontrun{
+#' if(interactive()){
+#' df <- tibble::tribble( ~agendaItemTitle,  "Trees are cool", "Streets are hot")
+#' match_key_terms_tidy(df)
+#'  }
+#' }
+#' @rdname match_key_terms_tidy
+#' @export
+#' @importFrom dplyr rowwise mutate filter select ungroup
+#' @importFrom stringr str_c str_extract
+#' @importFrom tidyr unnest
+
+match_key_terms_tidy <- function(
+  df,
+  name_col = "agendaItemTitle",
+  lut = key_terms()
+) {
+  if (!name_col %in% names(df)) {
+    stop("The specified name column does not exist in the dataframe.")
+  }
+  df |>
+    dplyr::rowwise() |>
+    dplyr::mutate(
+      matches = list(
+        lut |>
+          dplyr::filter(
+            stringr::str_detect(
+              !!rlang::sym(name_col),
+              stringr::str_c("\\b", .data$key_terms, "\\b")
+            )
+          ) |>
+          dplyr::mutate(
+            key_term = stringr::str_c("\\b", .data$key_terms, "\\b"),
+            match = stringr::str_extract(!!rlang::sym(name_col), .data$key_term)
+          )
+      )
+    ) |>
+    tidyr::unnest(.data$matches, keep_empty = TRUE) |>
+    dplyr::select(
+      dplyr::everything(),
+      .data$key_term,
+      .data$sectors,
+      .data$match
+    ) |>
+    dplyr::ungroup()
 }

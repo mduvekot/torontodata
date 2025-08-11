@@ -67,7 +67,7 @@ key_terms <- function() {
       all_cases("power"),
       all_cases("solar"),
       all_cases("hydro"),
-      all_cases("electric"),
+      all_cases("electri"),
       all_cases("Air condition")
     ),
     "Biodiversity and Indigenous",

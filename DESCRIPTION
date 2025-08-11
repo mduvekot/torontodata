@@ -18,6 +18,7 @@ Imports:
     dplyr,
     jsonlite,
     lubridate,
+    rlang,
     rvest,
     snakecase,
     stringr,
