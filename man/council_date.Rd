@@ -4,7 +4,7 @@
 \alias{council_date}
 \title{council date}
 \usage{
-council_date(nativeTermYear = 2025, referenceNumber = "IE23.2")
+council_date(nativeTermYear = 2023, referenceNumber = "IB4.5")
 }
 \arguments{
 \item{nativeTermYear}{integer}

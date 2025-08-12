@@ -72,7 +72,11 @@ match_key_terms <- function(
 #' @examples
 #' \dontrun{
 #' if(interactive()){
-#' df <- tibble::tribble( ~agendaItemTitle,  "Trees are cool", "Streets are hot")
+#' df <- tibble::tribble(
+#' ~agendaItemTitle,
+#' "Trees are cool",
+#' "Streets are hot",
+#' "Diesel Buses are big polluters")
 #' match_key_terms_tidy(df)
 #'  }
 #' }
@@ -102,7 +106,12 @@ match_key_terms_tidy <- function(
             )
           ) |>
           dplyr::mutate(
-            key_term = stringr::str_c("\\b", .data$key_terms, "\\b"),
+            # too broad
+            # key_term = stringr::str_c("\\b", .data$key_terms, "\\b"),
+            key_term = stringr::str_c(
+              "\\b",
+              stringr::str_replace(.data$key_terms, "\\.\\*", "\\\\w*\\\\b")
+            ),
             match = stringr::str_extract(!!rlang::sym(name_col), .data$key_term)
           )
       )
@@ -110,9 +119,17 @@ match_key_terms_tidy <- function(
     tidyr::unnest(.data$matches, keep_empty = TRUE) |>
     dplyr::select(
       dplyr::everything(),
-      .data$key_term,
-      .data$sectors,
-      .data$match
+      # .data$key_term,
+      # .data$sectors,
+      # .data$match
     ) |>
     dplyr::ungroup()
 }
+
+# df <- tibble::tribble(
+#   ~agendaItemTitle, ~foo,
+#   "Trees are cool", "hey",
+#   "Streets are hot", "don't forget",
+#   "Diesel Buses are big polluters", "about me"
+# )
+# match_key_terms_tidy(df)

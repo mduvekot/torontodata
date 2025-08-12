@@ -4,6 +4,7 @@ library(ggplot2)
 library(stringr)
 library(torontodata)
 library(readr)
+library(tidyverse)
 
 folder_path <- "~/Desktop/to_council_commitees_2025-08-11"
 
@@ -13,38 +14,48 @@ csv_files <- list.files(
   full.names = TRUE
 )
 
-df <- csv_files %>%
+df <- csv_files |>
   lapply(
-   readr::read_csv, 
-    col_types = readr::cols(...1 = col_integer(), 
-        nativeTermYear = col_integer(), 
-        considerStartTime = col_datetime(format = "%Y-%m-%d %H:%M:%S"), 
-        considerTypeCd = col_character(), 
-        itemStatusCd = col_integer(), 
-        meetingId = col_integer(), 
-        publishTypeCd = col_character(), 
-        wards = col_character(), 
-        inCamera = col_character(), 
-        agendaItemId = col_integer(), 
-        currentInd = col_character(), 
-        nativeItemStatusCd = col_character(), 
-        referenceNumber = col_character(), 
-        keyItemInd = col_character(), 
-        heldByFirstName = col_character(), 
-        heldByLastName = col_character(), 
-        statutory = col_character(), 
-        urgent = col_character(), 
-        heldByMemberId = col_character(), 
-        confidentialReason = col_character(), 
-        annotation = col_character(), 
-        url = col_character(), 
-        sectors = col_character(), 
-        key_terms = col_character(), 
-        key_term = col_character(), 
-        match = col_character()
-  )
-) %>%
+    readr::read_csv,
+    col_types = readr::cols(
+      ...1 = col_integer(),
+      nativeTermYear = col_integer(),
+      considerStartTime = col_datetime(format = "%Y-%m-%d %H:%M:%S"),
+      considerTypeCd = col_character(),
+      itemStatusCd = col_character(),
+      meetingId = col_integer(),
+      publishTypeCd = col_character(),
+      wards = col_character(),
+      agendaId = col_integer(),
+      inCamera = col_character(),
+      agendaItemId = col_integer(),
+      currentInd = col_character(),
+      nativeItemStatusCd = col_character(),
+      referenceNumber = col_character(),
+      keyItemInd = col_character(),
+      heldByFirstName = col_character(),
+      heldByLastName = col_character(),
+      statutory = col_character(),
+      urgent = col_character(),
+      heldByMemberId = col_character(),
+      confidentialReason = col_character(),
+      annotation = col_character(),
+      url = col_character(),
+      sectors = col_character(),
+      key_terms = col_character(),
+      key_term = col_character(),
+      match = col_character()
+    )
+  ) |>
   bind_rows()
+
+colnames(df)
+
+# df <- rename(df, "row_number" = "...1")
+
+# we don't need the first row
+# those are row numbers that are not really paort of the dataset anyway
+df <- df |> select(-c(`...1`))
 
 df <- df |>
   mutate(
@@ -52,7 +63,13 @@ df <- df |>
     decisionBodyCode = str_extract(referenceNumber, "[A-Z]+(?=\\d)")
   )
 
-data_decisionbody_id_code_name
+lut <- data_decisionbody_id_code_name()
+df <- left_join(df, lut)
+
+# redo with tighter matching
+df <- df |>
+  select(-c(sectors, key_terms, key_term, match))
+df <- df |> match_key_terms_tidy()
 
 committee_labels <- setNames(
   data_decisionbody_id_code_name()$decisionBodyName |> str_wrap(40),
@@ -61,9 +78,43 @@ committee_labels <- setNames(
 str(committee_labels)
 
 
-df$sectors |> unique()
+df <- df |> mutate(has_match = !is.na(match))
 
-df |>
+df_council = NULL
+# costly, do not run automatically
+# rm(df_council)
+# df_council <- df |>
+#   filter(has_match == TRUE) |>
+# #  slice_sample(n = 10) |>
+#   rowwise() |>
+#   mutate(council = council_date(nativeTermYear, referenceNumber))
+
+rm(df_all)
+rm(x)
+rm(y)
+x <- df |> distinct() |> filter(!is.na(agendaItemId))
+y <- df_council |>
+  select(agendaItemId, council) |>
+  distinct() |>
+  filter(!is.na(council))
+
+
+df_all <- left_join(x, y, by = join_by(agendaItemId))
+
+save(df_all, file = here::here("inst/extdata/df_all.RDS"))
+
+###############################################################################
+
+# save the data to an excel file
+library(xlsx)
+
+library(openxlsx2)
+wb <- wb_workbook() %>% wb_add_worksheet() %>% wb_add_data(x = df_all)
+wb_save(wb, file = "~/Desktop/climatefast.xlsx")
+
+
+###############################################################################
+df_all |>
   filter(!is.na(sectors)) |>
   summarize(.by = everything(), n = n()) |>
   ggplot() +
@@ -76,7 +127,7 @@ df |>
     x = n,
     y = sectors,
     fill = sectors,
-    # alpha = has_date
+    alpha = is.na(council)
   ) +
   geom_col(orientation = "y") +
   scale_fill_manual(
@@ -128,7 +179,7 @@ df |>
   filter(!is.na(match)) |>
   summarize(.by = c(key_terms, sectors, decisionBodyCode), n = n()) |>
   arrange(desc(n)) |>
-  filter(n > 5) |> 
+  filter(n > 5) |>
   tidyr::complete(decisionBodyCode, key_terms) |>
   ggplot() +
   aes(

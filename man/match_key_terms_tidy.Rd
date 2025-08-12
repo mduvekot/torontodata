@@ -25,7 +25,11 @@ DETAILS
 \examples{
 \dontrun{
 if(interactive()){
-df <- tibble::tribble( ~agendaItemTitle,  "Trees are cool", "Streets are hot")
+df <- tibble::tribble(
+~agendaItemTitle,
+"Trees are cool",
+"Streets are hot",
+"Diesel Buses are big polluters")
 match_key_terms_tidy(df)
  }
 }
