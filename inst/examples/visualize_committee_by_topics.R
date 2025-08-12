@@ -83,11 +83,22 @@ df <- df |> mutate(has_match = !is.na(match))
 df_council = NULL
 # costly, do not run automatically
 # rm(df_council)
-# df_council <- df |>
-#   filter(has_match == TRUE) |>
-# #  slice_sample(n = 10) |>
-#   rowwise() |>
-#   mutate(council = council_date(nativeTermYear, referenceNumber))
+df_council <- df |>
+  filter(has_match == TRUE) |>
+  #  slice_sample(n = 10) |>
+  rowwise() |>
+  mutate(council = council_date(nativeTermYear, referenceNumber))
+
+
+# save df_council
+
+save(df, file = here::here("inst/extdata/df.RData"))
+save(df_council, file = here::here("inst/extdata/df_council.RData"))
+
+# restore df_coucil
+load(file = here::here("inst/extdata/df.RData"), .GlobalEnv)
+load(file = here::here("inst/extdata/df_council.RData"), .GlobalEnv)
+
 
 rm(df_all)
 rm(x)
@@ -101,8 +112,10 @@ y <- df_council |>
 
 df_all <- left_join(x, y, by = join_by(agendaItemId))
 
-save(df_all, file = here::here("inst/extdata/df_all.RDS"))
+#save(df_all, file = here::here("inst/extdata/df_all.RDS"))
+save(df_all, file = here::here("inst/extdata/df_all.RData"))
 
+# load(here::here("inst/extdata/df_all.RData"))
 ###############################################################################
 
 # save the data to an excel file
@@ -174,6 +187,39 @@ df_all |>
     legend.box.margin = margin(t = 48, r = 0, b = 72, l = 0, unit = "pt")
   )
 
+###############################################################################
+# per the chart abovem the highedt propostryion of climate ossues that did not
+# get to council is in IE and EX.
+# can we see wehy?
+# Note that where match == NA we didn't check (because it's expensive) if those
+# went to council, so that number just tells us how mnany other agendaItems the
+# committtee discussed
+
+df_all |>
+  filter(decisionBodyCode == "IE") |>
+  mutate(has_council_date = !is.na(council)) |>
+  summarise(.by = c(match, has_council_date), n = n()) |>
+  pivot_wider(
+    id_cols = match,
+    names_from = has_council_date,
+    values_from = n
+  ) |>
+  mutate(
+    `TRUE` = replace_na(`TRUE`, 0),
+    `FALSE` = replace_na(`FALSE`, 0),
+    pct = `TRUE` / (`TRUE` + `FALSE`)
+  ) |>
+  arrange(desc(pct)) |>
+  mutate(pct_ = scales::label_percent()(pct)) |>
+  print(n = Inf)
+# here we saw that of the agendaItems that matched "Climate", only 3 out of 7
+# went to council. What were they? Did thay ALSO do poorly in other commitees?
+
+df_all |>
+  filter(match == "Climate") |>
+  select(decisionBodyName, council, itemStatusCd, agendaItemTitle, url)
+
+# It looks like the agendaItems that didn't get sent to council were reports
 
 df |>
   filter(!is.na(match)) |>
