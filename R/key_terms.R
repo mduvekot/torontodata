@@ -31,8 +31,7 @@ key_terms <- function() {
         toupper(x),
         snakecase::to_title_case(x),
         snakecase::to_sentence_case(x)
-      )),
-      ".*"
+      ))
     )
   }
 
@@ -51,11 +50,11 @@ key_terms <- function() {
       all_cases("gas"),
       all_cases("global warming"),
       all_cases("greenhouse"),
-      all_cases("mitig"),
+      all_cases("mitig\\w*"),
       all_cases("Net zero"),
-      all_cases("pollut"),
+      all_cases("pollut\\w*"),
       all_cases("smog"),
-      all_cases("sustainab"),
+      all_cases("sustainab\\w*"),
       "TransformTO"
     ),
     "Energy terms",
@@ -67,18 +66,18 @@ key_terms <- function() {
       all_cases("power"),
       all_cases("solar"),
       all_cases("hydro"),
-      all_cases("electri"),
-      all_cases("Air condition")
+      all_cases("electri\\w*"),
+      all_cases("Air condition\\w*")
     ),
     "Biodiversity and Indigenous",
     c(
       all_cases("Biodiversity"),
       all_cases("conservation"),
       all_cases("green"),
-      all_cases("Indig"),
+      all_cases("Indig\\w*"),
       all_cases("pollen"),
-      all_cases("Pollin"),
-      all_cases("pollu"),
+      all_cases("Pollin\\w*"),
+      all_cases("pollu\\w*"),
       all_cases("tree")
     ),
     "Transportation terms",
@@ -120,7 +119,7 @@ key_terms <- function() {
       all_cases("supportive homes"),
       all_cases("tariffs"),
       all_cases("Warming centres"),
-      all_cases("Warming|cooling centres"),
+      all_cases("Cooling centres"),
       all_cases("Waste"),
       "Waterfront"
     )

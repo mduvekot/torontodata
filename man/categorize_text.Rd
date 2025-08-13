@@ -2,24 +2,31 @@
 % Please edit documentation in R/categorize_text.R
 \name{categorize_text}
 \alias{categorize_text}
-\title{catgeorize text}
+\title{categorize text}
 \usage{
-categorize_text(text)
+categorize_text(text, terms_tbl = key_terms())
 }
 \arguments{
 \item{text}{text}
+
+\item{terms_tbl}{tibble with two columnsl key_terms and sector. Default: key_terms()}
 }
 \value{
 tibble
 }
 \description{
-catagorizes a text using key_terms()
+categorizes a text using key_terms()
 }
 \details{
 DETAILS
 }
 \examples{
-categorize_text("Climate change is real")
+categorize_text(text = "The Toronto Atmospheric Fund's (TAF) mandate
+includes the promotion of global climate stabilization through the
+reduction of greenhouse gas emissions, local air quality, energy
+conservation and efficiency, public understanding of global warming
+and its implications for the urban environment, and related research
+and technology development. ")
 }
 \seealso{
 \code{\link[stringr]{str_detect}}, \code{\link[stringr]{modifiers}}
