@@ -1,10 +1,11 @@
-#' @title matchkey terms
+#' @title match key terms
 #' @description use a lookup table to match key tersma snf sectors to agendaItemTitle
 #' @param df data frame
 #' @param name_col character, Default: 'agendaItemTitle'
 #' @param lut data frame, Default: key_terms()
 #' @return data frame
-#' @details DETAILS
+#' @details this function assumes a dataframe that contains a title or text
+#' string that contains climate-related issues
 #' @examples
 #' \dontrun{
 #' if(interactive()){
@@ -125,11 +126,3 @@ match_key_terms_tidy <- function(
     ) |>
     dplyr::ungroup()
 }
-
-# df <- tibble::tribble(
-#   ~agendaItemTitle, ~foo,
-#   "Trees are cool", "hey",
-#   "Streets are hot", "don't forget",
-#   "Diesel Buses are big polluters", "about me"
-# )
-# match_key_terms_tidy(df)

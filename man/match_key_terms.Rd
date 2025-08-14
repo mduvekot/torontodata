@@ -2,7 +2,7 @@
 % Please edit documentation in R/match_key_terms.R
 \name{match_key_terms}
 \alias{match_key_terms}
-\title{matchkey terms}
+\title{match key terms}
 \usage{
 match_key_terms(df, name_col = "agendaItemTitle", lut = key_terms())
 }
@@ -20,7 +20,8 @@ data frame
 use a lookup table to match key tersma snf sectors to agendaItemTitle
 }
 \details{
-DETAILS
+this function assumes a dataframe that contains a title or text
+string that contains climate-related issues
 }
 \examples{
 \dontrun{

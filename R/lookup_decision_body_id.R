@@ -1,13 +1,20 @@
-#' lookup the decisionbodyId  of a city Committee (including Council) by name
-#'
-#' This function retrieves a an interger value for a decisionBody
-#'
-#' @param name, the exact name of the decisionBody
-#' @return an inter value for the decisionBodyId
-#' @export
-#' @importFrom rlang .data
+#' @title lookup decision body
+#' @description look up the decisionBodyId of a Committee (including City Council) by name
+#' @param name PARAM_DESCRIPTION, Default: 'City Council'
+#' @return integer
+#' @details looks up the decisionBodyId in fetch_multiple_decisionbody_list()
 #' @examples
-#' lookup_decision_body_id()
+#' \dontrun{
+#' if(interactive()){
+#'  lookup_decision_body_id("Executive Committee")
+#'  }
+#' }
+#' @seealso
+#'  \code{\link[torontodata:fetch_multiple_decisionbody_list]{fetch_multiple_decisionbody_list}}
+#' @rdname lookup_decision_body_id
+#' @export
+#'
+#'
 lookup_decision_body_id <- function(name = "City Council") {
   fetch_multiple_decisionbody_list() |>
     dplyr::filter(as.character(name) == as.character(.data$decisionBodyName)) |>

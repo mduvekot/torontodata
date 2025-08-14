@@ -2,19 +2,29 @@
 % Please edit documentation in R/lookup_decision_body_id.R
 \name{lookup_decision_body_id}
 \alias{lookup_decision_body_id}
-\title{lookup the decisionbodyId  of a city Committee (including Council) by name}
+\title{lookup decision body}
 \usage{
 lookup_decision_body_id(name = "City Council")
 }
 \arguments{
-\item{name, }{the exact name of the decisionBody}
+\item{name}{PARAM_DESCRIPTION, Default: 'City Council'}
 }
 \value{
-an inter value for the decisionBodyId
+integer
 }
 \description{
-This function retrieves a an interger value for a decisionBody
+look up the decisionBodyId of a Committee (including City Council) by name
+}
+\details{
+looks up the decisionBodyId in fetch_multiple_decisionbody_list()
 }
 \examples{
-lookup_decision_body_id()
+\dontrun{
+if(interactive()){
+ lookup_decision_body_id("Executive Committee")
+ }
+}
+}
+\seealso{
+\code{\link[torontodata:fetch_multiple_decisionbody_list]{fetch_multiple_decisionbody_list}}
 }
