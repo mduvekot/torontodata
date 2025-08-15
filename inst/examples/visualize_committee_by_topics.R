@@ -63,7 +63,7 @@ df <- df |>
     decisionBodyCode = str_extract(referenceNumber, "[A-Z]+(?=\\d)")
   )
 
-lut <- data_decisionbody_id_code_name()
+lut <- lut_decisionbody_id_code_name()
 df <- left_join(df, lut)
 
 # redo with tighter matching
@@ -72,8 +72,8 @@ df <- df |>
 df <- df |> match_key_terms_tidy()
 
 committee_labels <- setNames(
-  data_decisionbody_id_code_name()$decisionBodyName |> str_wrap(40),
-  data_decisionbody_id_code_name()$decisionBodyCode
+  lut_decisionbody_id_code_name()$decisionBodyName |> str_wrap(40),
+  lut_decisionbody_id_code_name()$decisionBodyCode
 )
 str(committee_labels)
 

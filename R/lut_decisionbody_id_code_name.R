@@ -13,10 +13,10 @@
 #' }
 #' @seealso
 #'  \code{\link[tibble]{tribble}}
-#' @rdname data_decisionbody_id_code_name
+#' @rdname lut_decisionbody_id_code_name
 #' @export
 #' @importFrom tibble tribble
-data_decisionbody_id_code_name <- function() {
+lut_decisionbody_id_code_name <- function() {
   # per https://secure.toronto.ca/council/#/committees
   # last update 2025-08-08 15:49:59 EDT
   tibble::tribble(
