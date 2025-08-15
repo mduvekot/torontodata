@@ -29,7 +29,8 @@
 #' @importFrom tidyr unnest
 #'
 categorize_agendas <- function(decisionBodyId) {
-  meetings <- fetch_multiple_meeting(decisionBodyId = decisionBodyId)
+  fetcher <- make_fetch_meetings()
+  meetings <- fetcher(decisionBodyId = decisionBodyId)
   meetingIds <- meetings$meetingId
 
   agenda_raw <- purrr::map(
