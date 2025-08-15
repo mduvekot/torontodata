@@ -42,7 +42,8 @@ fetch_agenda_item <- function(meetingId) {
 #' @importFrom purrr map compact list_rbind
 #' @importFrom lubridate as_datetime
 fetch_all_agenda_items <- function(decisionBodyId) {
-  fetch_multiple_meeting(decisionBodyId = decisionBodyId) |>
+  fetcher <- make_fetch_meetings()
+  fetcher(decisionBodyId = decisionBodyId) |>
     dplyr::pull(.data$meetingId) |>
     purrr::map(fetch_agenda_item) |>
     purrr::compact() |>
