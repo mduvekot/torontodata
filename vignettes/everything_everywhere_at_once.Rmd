@@ -1,0 +1,183 @@
+---
+title: "everything everywhere all at once"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{everything everywhere all at once}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+knitr::opts_chunk$set(eval = FALSE, include = FALSE)
+library(torontodata)
+```
+
+We're going to get all the information we can and put it in a single dataset.
+
+First we need to get a list of all the decisonBodyIds
+
+```{r}
+termIds <- c(4, 6, 7, 8)
+purrr::map(termIds, fetch_multiple_decisionbody_list) |>
+           purrr::list_rbind() -> decision_bodies
+```
+
+Now we have a dataframe called *decision_bodies*, and that has a variable called **decisionBodyId.** That lets us find all the meetings for every committee
+
+```{r}
+decision_body_ids <-  decision_bodies |> dplyr::pull(decisionBodyId)
+```
+
+```{r}
+save(decision_body_ids, file = here::here("inst/extdata/decision_body_ids.RData"))
+```
+
+Lets get all meetings for all the decision_bodies. This will take a while when you do it for the first time.
+
+```{r}
+# fetcher <- make_fetch_meetings()
+purrr::map(decision_body_ids, fetcher) |>
+purrr::keep(~ is.data.frame(.x) || is.null(.x)) |>
+purrr::list_rbind() -> meetings
+```
+
+Reminder, list_rbind is very strict do If you get an error:
+
+```         
+Error in `purrr::list_rbind()`:     
+! Each element of `x` must be either a data frame or `NULL`.
+ℹ Elements 97, 171, 172, 251, 263, and 267 are not.
+Show Traceback
+```
+
+you should use
+
+```         
+purrr::keep(your_list, ~ is.data.frame(.x) || is.null(.x))
+```
+
+Now we have a list of all the **meetingIds**, like, ever. OK, not quite, but a lot of em.
+
+```{r}
+colnames(meetings)
+```
+
+```{r}
+save(meetings, file = here::here("inst/extdata/meetings.RData"))
+```
+
+Net, we'll get all the agendaItems for every meeting, ever. You may want ro cache these results too, because this is an expensive (I mean slow) processs,a nd also , we're not going to repeat these API queries all the time. For demo purposes, let's just sample a few.
+
+```{r}
+# closure-based caching function, only do this once
+# agenda_fetcher <- make_agenda_item_title_fetcher()
+
+dplyr::sample_n(meetings, 1500) |> 
+dplyr::pull(meetingId) |> unlist() |>
+#  print()
+purrr::map(agenda_fetcher) |>
+purrr::list_rbind() -> agendas
+```
+
+Now do all of them.
+
+```{r}
+meetings |>
+dplyr::pull(meetingId) |> unlist() |>
+#  print()
+purrr::map(agenda_fetcher) |>
+purrr::list_rbind() -> agendas
+```
+
+save the agenda
+
+```{r}
+save(agendas, file = here::here("inst/extdata/agendas.RData"))
+```
+
+Now that we have all the agendas, let;s get the votes. If it doesn't already exist, create the closure.
+
+```{r}
+source(here::here("R/vote_counter.R"))
+vote_counter <- make_vote_counter()
+```
+
+```{r}
+# dplyr::sample_n(agendas, 5000) |>
+agendas |>
+dplyr::select (nativeTermYear, referenceNumber) |>
+purrr::pmap(vote_counter) |>
+purrr::keep(~ is.data.frame(.x) || is.null(.x)) |>
+purrr::list_rbind() -> votes
+```
+
+If you get an error like:
+
+\
+Error in \`purrr::pmap()\`:
+
+ℹ In index: 6803.
+
+Caused by error in \`open.connection()\`:
+
+! cannot open the connection
+
+you can try
+
+```{r}
+# safe_vote_counter <- make_safe_vote_counter()
+
+agendas  |>
+dplyr::select (nativeTermYear, referenceNumber) |>
+purrr::pmap(safe_vote_counter) |>
+purrr::keep(~ is.data.frame(.x) || is.null(.x)) |>
+purrr::list_rbind() -> votes
+```
+
+```{r}
+save(votes, file = here::here("inst/extdata/votes.RData"))
+```
+
+Wondering how many votes per year? Or in which session the most votes were cast?
+
+```{r}
+votes |> 
+dplyr::count(nativeTermYear, referenceNumber) |>
+dplyr::arrange(dplyr::desc(n))
+```
+
+Some votes are not cpature, for example 2022 "BA198.1" because it does not have a h4 of class "vote-table-header".
+
+```{r}
+
+browse_agenda_item <- function (nativeTermYear, referenceNumber) {
+   url <- paste0(
+      "https://secure.toronto.ca/council/agenda-item.do?item=",
+      nativeTermYear,
+      ".",
+      referenceNumber
+    )
+  browseURL(url)
+}
+
+browse_agenda_item(2022, "BA198.1")
+browse_agenda_item(2011, "EX10.1")
+
+
+```
+
+```{r}
+vote_counter2 <- make_safe_vote_counter()
+
+```
+
+```{r}
+vote_counter2(2022, "BA198.1", use_cache = FALSE)
+```

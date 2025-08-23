@@ -72,6 +72,7 @@ make_agenda_item_title_fetcher <- function() {
   cache <- list()
 
   function(meetingId) {
+    print(meetingId)
     key <- as.character(meetingId)
 
     if (!is.null(cache[[key]])) {

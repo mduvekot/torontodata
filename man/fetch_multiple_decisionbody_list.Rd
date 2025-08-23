@@ -4,10 +4,10 @@
 \alias{fetch_multiple_decisionbody_list}
 \title{Fetch a list of decision bodies from the Toronto Council API}
 \usage{
-fetch_multiple_decisionbody_list(term_id = 8, use_cache = TRUE)
+fetch_multiple_decisionbody_list(termId = 8, use_cache = TRUE)
 }
 \arguments{
-\item{term_id}{Integer. The council term (e.g., 8 for 2022–2026).}
+\item{termId}{Integer. The council term (e.g., 8 for 2022–2026).}
 
 \item{use_cache}{Logical. If TRUE (default), returns cached results if available.}
 }

@@ -19,19 +19,55 @@ knitr::opts_chunk$set(eval = FALSE, include = FALSE)
 library(torontodata)
 ```
 
-The **decisionBodyId** is a numerical value that identifies a commmittee. You'll need to to query the Toronto City API on committee meetings.
+The **decisionBodyId** is a numerical value that identifies a committee or council( the decisionBodyId for council is 2462, for example).\
+\
+You'll need to to query the Toronto City API on committee meetings. A query looks like this: <https://secure.toronto.ca/council/api/multiple/decisionbody-list.json?termId=8>
+
+fetch_multiple_decisionbody_list() makes such a query and returns a dataframe
 
 ```{r eval=FALSE, include=FALSE}
-fetch_multiple_decisionbody_list()
+decision_bodies <- fetch_multiple_decisionbody_list()
 ```
 
-If you know the exact name of the committee, you can look up the **decisionBodyId** by name
+We can easily go back to 2018-2022 or 2014-2018 by specifying another **termId** than 8 (the current term in 2025)
+
+```{r}
+term6 <- fetch_multiple_decisionbody_list(termId = 6)
+term7 <- fetch_multiple_decisionbody_list(termId = 7)
+
+```
+
+But before that things get a bit more difficult. There doesn't appear to be a term5
+
+```{r}
+term5 <- fetch_multiple_decisionbody_list(termId = 5)
+```
+
+But there is a termId=4 for 2010-2014
+
+```{r}
+term4 <- fetch_multiple_decisionbody_list(termId = 4)
+```
+
+And also a termId=3 for 2006-2010
+
+```{r}
+term3 <- fetch_multiple_decisionbody_list(termId = 3)
+```
+
+But not an earlier than 2006: I cannot find a term 2 or earlier. <https://secure.toronto.ca/council/api/multiple/decisionbody-list.json?termId=2> returns no records
+
+```{r}
+term2 <- fetch_multiple_decisionbody_list(termId = 2)
+```
+
+If you know the exact name of the committee for the 2022-2-26 term, you can look up the **decisionBodyId** by name.
 
 ```{r eval=FALSE, include=FALSE}
 lookup_decision_body_id(name = "Scarborough Community Council")
 ```
 
-When you have a **decisionBodyID**, you can lookup the meetings for that committee
+Once you have a **decisionBodyID**, you can lookup the meetings of that committee
 
 ```{r eval=FALSE, include=FALSE}
 fetch_multiple_meeting(decisionBodyId = 2467)
@@ -41,20 +77,80 @@ and once you have a list of all the **meetingId** values, you can query those
 meeting_25793 <- fetch_individual_meeting(meetingId = 25793)
 ```
 
-you may be interested in the agenda items of that meeting
+We could look at council in 2028 for example. That **decisionBodyId** is 1862. We're trying to cache the results, so the syntax for doing this is that we create a closure, so we only need to fetch that data from the API once. This
 
-```{r eval=FALSE, include=FALSE}
- meeting_25793[["sections"]][["agendaItems"]][[1]]
-`
-``
-We have a function that makes accessing the titles of the agenda items a bit easier:
-fetch_individual_meeting_agenda_item_titles(meetingId = 25793)
+```{r}
+fetcher <- make_fetch_meetings() 
+meetings_1862<- fetcher(1862)
+
+```
+
+Or we could look at the Executive Committee in 2025
+
+```{r}
+meetings_2468 <-fetcher(2468)
+```
+
+Let's look at what variables we get
+
+```{r}
+colnames(meetings_1862)
+```
+
+That doesn't look very useful yet, but the important variable is the **meetingId**.
+
+```{r}
+meetings_1862$meetingId
+```
+
+We could look up a meeting in the API, and see what that gets us. The API endpoint for a meeting look like this: <https://secure.toronto.ca/council/api/individual/meeting/21558.json>
+
+This returns a LOT of information, and some of it is deeply nested.
+
+```{r}
+# fetch_individual_meeting(meetingId = 21558)
+fetch_individual_meeting(meetingId = 25774)
+
+```
+
+If you just want the **agendaItemTitle**, use *fetch_individual_meeting_agenda_item_titles()*
+
+```{r}
+# fetch_individual_meeting_agenda_item_titles(meetingId = 21558)
+fetch_individual_meeting_agenda_item_titles(meetingId = 25774)
+```
+
+the function also returns the **nativeTermYear** and **referenceNumber**, which we need to construct the url to the web page for the agendaItem. We may need to look at those pages if we want to see how the voting went. Note that not all agendaItems have votes.
+
+```{r}
+agenda_item_url <- function(nativeTermYear, referenceNumber) {
+  paste0("https://secure.toronto.ca/council/agenda-item.do?item=", nativeTermYear, ".", referenceNumber)
+}
+
+# agenda_item_url(2022, "RM50.3") |> browseURL()
+agenda_item_url(2025, "EX23.2") |> browseURL()
+
+```
+
+To get the votes on an agenda item, use vote_counter()
+
+```{r}
+# vote_counter(nativeTermYear = 2025, referenceNumber = "MM28.37")
+vote_counter(nativeTermYear = 2025, referenceNumber = "EX23.2")
+
 ```
 
 What if you wanted to have a a list of all the agendaItemTitles for all the meetings of a committee?
 
+Remember that earlier we made that fetcher() closure? Let's re-use that. 2467 is the Scarborough Community Council, in case you were wondering.
+
+```{r}
+decision_bodies |> dplyr::filter (decisionBodyId == 2467)
+```
+
 ```{r eval=FALSE, include=FALSE}
-meetingIds <- fetch_multiple_meeting(decisionBodyId = 2467)$meetingId
+#meetingIds <- fetch_multiple_meeting(decisionBodyId = 2467)fetcher(2467)
+meetingIds <- fetcher(2467) |> dplyr::pull(meetingId)
 meetings_2467 <- purrr::map(
   meetingIds,
   fetch_individual_meeting_agenda_item_titles
