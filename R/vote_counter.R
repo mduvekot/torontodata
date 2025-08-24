@@ -121,7 +121,6 @@ utils::globalVariables(c(
 #'  vote_counter(2023, "MM6.17")
 #'  }
 #' }
-#' @seealso
 #' @rdname make_vote_counter
 #' @export
 #' @importFrom rvest read_html html_elements html_element html_text html_table

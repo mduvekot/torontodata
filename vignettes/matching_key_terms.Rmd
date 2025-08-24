@@ -19,6 +19,8 @@ head(keywords)
 
 ```{r}
 library(torontodata)
-categorize_text("Keeping the climate within paramaters that permit human life is a hell of a lot easier than terraforming Mars, a planet that has no magnetosphere, no water and no air")
+categorize_txt(
+  "Keeping the climate within paramaters that permit human life is a hell of a lot easier than terraforming Mars, a planet that has no magnetosphere, no water and no air"
+)
 ```
 
