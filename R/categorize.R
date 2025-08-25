@@ -71,7 +71,7 @@ categorize_txt <- function(text, terms_tbl = key_terms()) {
 
 
 #' @title categorize df
-#' @description catagorize a dataframe using a named column
+#' @description categorize a dataframe using a named column
 #' @param df dataframe
 #' @param name_col char, Default: 'agendaItemTitle'
 #' @param terms_tbl LUT as a tibble, Default: key_terms()
@@ -123,7 +123,8 @@ categorize_df <- function(
     ) |>
     dplyr::select(-!!rlang::sym(name_col)) |>
     # check for new interface
-    tidyr::unnest(, c(.data$matches), keep_empty = TRUE) |>
+    # tidyr::unnest(, c(.data$matches), keep_empty = TRUE) |>
+    tidyr::unnest(cols = c(matches), keep_empty = TRUE) |>
     dplyr::select(-text)
 
   # Add global keyword count
