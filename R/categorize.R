@@ -1,4 +1,4 @@
-utils::globalVariables(c("text", "row_id", "data"))
+utils::globalVariables(c("text", "row_id", "data", "matches"))
 
 #' @title match key terms
 #' @description utility function for categorization using a LUT

@@ -17,7 +17,7 @@ categorize_df(df, name_col = "agendaItemTitle", terms_tbl = NULL)
 tibble
 }
 \description{
-catagorize a dataframe using a named column
+categorize a dataframe using a named column
 }
 \details{
 DETAILS
