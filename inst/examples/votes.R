@@ -52,39 +52,6 @@ votes_df |>
   )
 
 
-fetch_councillors <- function() {
-  cache <- NULL
-
-  function() {
-    if (!is.null(cache)) {
-      message("Using cached councillor data")
-      return(cache)
-    }
-
-    url <- "https://www.toronto.ca/city-government/council/members-of-council/"
-    html <- rvest::read_html(url)
-    tables <- rvest::html_table(html)
-
-    result <- tables[[1]] |>
-      dplyr::mutate(
-        Councillor = stringr::str_replace_all(Councillor, "Councillor ", "")
-      ) |>
-      mutate(
-        last_name = word(Councillor, -1), # Extract last word as last name
-        Councillor = factor(Councillor, levels = Councillor[order(last_name)])
-      ) |>
-      arrange(last_name)
-
-    cache <<- result
-    result
-  }
-}
-# closure-based caching function
-get_councillors <- fetch_councillors()
-
-get_councillors()$Councillor
-
-
 # why is Shelley Carroll so bad? is it amendments?
 votes_df |>
   filter(
