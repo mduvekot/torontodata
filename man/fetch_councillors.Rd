@@ -25,8 +25,3 @@ get_councillors()$last_name
  }
 }
 }
-\seealso{
-\code{\link[rvest]{read_html}}, \code{\link[rvest]{html_table}}
- \code{\link[dplyr]{mutate}}, \code{\link[dplyr]{c("rowwise", "rowwise")}}, \code{\link[dplyr]{group_by}}, \code{\link[dplyr]{arrange}}
- \code{\link[stringr]{str_replace}}, \code{\link[stringr]{str_split}}
-}
