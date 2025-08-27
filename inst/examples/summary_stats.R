@@ -25,3 +25,27 @@ cat_non_council_votes |>
   filter(!is.na(sector)) |>
   pull(`Agenda.Item..`) |>
   map(browseItem)
+
+cat_non_council_votes |>
+  filter(!is.na(sector)) |>
+  select(`Agenda.Item..`, sector) |>
+  distinct() |>
+  left_join(member_voting_record) -> df_plot
+
+ggplot(df_plot) +
+  aes(x = `Agenda.Item..`, y = Last.Name, fill = Vote) +
+  geom_tile() +
+  scale_fill_manual(
+    values = c(
+      "No" = "#ff0000",
+      "Yes" = "#afafaf",
+      "Absent" = "#efefef",
+      "Absent(Interest Declared" = "#efefef"
+    )
+  ) +
+  scale_y_discrete(position = "right") +
+  theme_void() +
+  theme(
+    #axis.text.y.left = element_text(hjust = 1),
+    axis.text.y.right = element_text(hjust = 0)
+  )
